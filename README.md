@@ -1,1 +1,1 @@
-# Interactive-quiz-applocation
+# Interactive-quiz-application
