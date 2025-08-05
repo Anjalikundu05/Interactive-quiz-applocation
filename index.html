@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #a24d4d;
+      padding: 30px;
+    }
+
+    #quiz-container {
+      background: #fff;
+      max-width: 400px;
+      margin: auto;
+      padding: 60px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #ccc;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    h2 {
+      color: #da4e4e;
+    }
+
+    #question {
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background: #e0e0e0;
+      cursor: pointer;
+    }
+
+    .option-btn:disabled {
+      background: #bdbdbd;
+      cursor: default;
+    }
+
+    #next-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
+
+    #feedback {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .correct-effect {
+      animation: correctFlash 0.5s ease-in-out;
+    }
+
+    .wrong-effect {
+      animation: wrongFlash 0.5s ease-in-out;
+    }
+
+    @keyframes correctFlash {
+      0% { background-color: #d4edda; }
+      50% { background-color: #a5d6a7; }
+      100% { background-color: #fff; }
+    }
+
+    @keyframes wrongFlash {
+      0% { background-color: #f8d7da; }
+      50% { background-color: #ef9a9a; }
+      100% { background-color: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <h2>Quiz</h2>
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <button id="next-btn">Next</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        options: [
+          "Hyperlinks and Text Markup Language",
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinking Text Main Language"
+        ],
+        answer: 1
+      },
+      {
+        question: "What language is used for styling web pages?",
+        options: ["HTML", "jQuery", "CSS", "XML"],
+        answer: 2
+      },
+      {
+        question: "CSS stands for:",
+        options: [
+          "Color Style Sheets",
+          "Cascading Style Sheets",
+          "Creative Style Syntax",
+          "Coding Style Sheet"
+        ],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("question").textContent = q.question;
+
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach((optionText, index) => {
+        const button = document.createElement("button");
+        button.textContent = optionText;
+        button.className = "option-btn";
+        button.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(button);
+      });
+
+      document.getElementById("feedback").textContent = "";
+
+      const quizContainer = document.getElementById("quiz-container");
+      quizContainer.classList.remove("correct-effect", "wrong-effect");
+    }
+
+    function checkAnswer(selectedIndex) {
+      const q = questions[currentQuestion];
+      const feedbackDiv = document.getElementById("feedback");
+      const quizContainer = document.getElementById("quiz-container");
+      quizContainer.classList.remove("correct-effect", "wrong-effect");
+
+      if (selectedIndex === q.answer) {
+        feedbackDiv.textContent = "✅ Correct!";
+        feedbackDiv.style.color = "green";
+        score++;
+        quizContainer.classList.add("correct-effect");
+      } else {
+        feedbackDiv.textContent = `❌ Incorrect! The correct answer was: ${q.options[q.answer]}`;
+        feedbackDiv.style.color = "red";
+        quizContainer.classList.add("wrong-effect");
+      }
+
+      document.querySelectorAll(".option-btn").forEach(button => {
+        button.disabled = true;
+      });
+
+      document.getElementById("next-btn").style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+        document.getElementById("next-btn").style.display = "none";
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quiz-container").innerHTML = `
+        <h2>Quiz Completed!</h2>
+        <p>Your score: ${score} / ${questions.length}</p>
+        <p>${score === questions.length ? "🎉 Excellent job!" : "Good effort! Try again to improve."}</p>
+      `;
+    }
+
+    window.onload = function () {
+      showQuestion();
+      document.getElementById("next-btn").onclick = nextQuestion;
+    };
+  </script>
+</body>
+</html>
